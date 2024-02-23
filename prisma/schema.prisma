@@ -15,55 +15,69 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Auth schema
 model Account {
-    id                       String   @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt                DateTime @default(now())
-    updatedAt                DateTime @updatedAt
-    userId                   String
-    type                     String
-    provider                 String
-    providerAccountId        String
-    refresh_token            String? @db.String
-    access_token             String? @db.String
-    refresh_token_expires_in Int?
-    expires_at               Int?
-    token_type               String?
-    scope                    String?
-    id_token                 String? @db.String
-    session_state            String?
+  id                       String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+  userId                   String   @db.ObjectId
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String?  @db.String
+  access_token             String?  @db.String
+  refresh_token_expires_in Int?
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String?  @db.String
+  session_state            String?
+  user                     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    @@unique([provider, providerAccountId])
+  @@unique([provider, providerAccountId])
 }
 
 model Session {
-    id           String   @id @default(auto()) @map("_id") @db.ObjectId
-    sessionToken String   @unique
-    expires      DateTime
-    user         User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId       String?
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String   @db.ObjectId
 }
 
 model User {
-    id            String    @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt
-    name          String?
-    email         String?   @unique
-    password      String?
-    emailVerified DateTime?
-    image         String?
-    role          String?   @default("user")
-    last_login    DateTime? @default(now())
-    accounts      Account[]
-    sessions      Session[]
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  name          String?
+  email         String?   @unique
+  password      String?
+  emailVerified DateTime?
+  image         String?
+  role          String?   @default("user")
+  last_login    DateTime? @default(now())
+  accounts      Account[]
+  sessions      Session[]
+  memes         Meme[]
 }
 
 model VerificationToken {
-    identifier String   @id @default(auto()) @map("_id") @db.ObjectId
-    token      String   @unique
-    expires    DateTime
+  identifier String   @id @default(auto()) @map("_id") @db.ObjectId
+  token      String   @unique
+  expires    DateTime
 
-    @@unique([identifier, token])
+  @@unique([identifier, token])
+}
+
+// Memery schema
+model Meme {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  url       String?
+  title     String?
+  text      String?
+  tags      String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
