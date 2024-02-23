@@ -3,7 +3,7 @@ import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-import MainMenu from "@/components/main-menu";
+import Header from "@/components/header";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -24,9 +24,7 @@ export default function RootLayout({
         className={cn("min-h-screen font-sans antialiased", inter.className)}
       >
         <div className="flex h-screen flex-col">
-          <div className="flex items-center justify-between p-4">
-            <MainMenu />
-          </div>
+          <Header />
           <div className="grow p-4">{children}</div>
         </div>
       </body>
