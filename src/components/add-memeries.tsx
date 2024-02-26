@@ -95,7 +95,7 @@ export function AddMemeriesForm() {
                             className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400"
                             variant="ghost"
                           >
-                            <XCircle className="" />
+                            <XCircle className="size-4" />
                           </Button>
                         )}
                       </div>
