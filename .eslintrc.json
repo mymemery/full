@@ -27,7 +27,8 @@
         "plugin:tailwindcss/recommended",
         "airbnb-typescript",
         "next/core-web-vitals",
-        "plugin:prettier/recommended"
+        "plugin:prettier/recommended",
+        "plugin:@tanstack/eslint-plugin-query/recommended"
       ],
       "parserOptions": {
         "project": "./tsconfig.json"
@@ -66,7 +67,8 @@
         "unused-imports/no-unused-vars": [
           "error",
           { "argsIgnorePattern": "^_" }
-        ]
+        ],
+        "no-nested-ternary": "off"
       }
     }
   ]

@@ -6,7 +6,7 @@ export default function Home() {
 
   return (
     <div className="flex h-full flex-col items-center justify-center">
-      <div className="mb-8 text-center">
+      <div className="mb-4 text-center">
         <h1 className="text-lg font-bold">Welcome!</h1>
         <p>You have no Memeries. Add them here to get started:</p>
       </div>

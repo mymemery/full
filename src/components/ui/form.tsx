@@ -135,12 +135,23 @@ const FormDescription = React.forwardRef<
 });
 FormDescription.displayName = "FormDescription";
 
+function getErrorMessage(error: any, path: string[]): string | undefined {
+  try {
+    return path.reduce((acc, key) => acc[key], error);
+  } catch {
+    return undefined;
+  }
+}
+
 const FormMessage = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
   const { error, formMessageId } = useFormField();
-  const body = error ? String(error?.message) : children;
+  const body =
+    getErrorMessage(error, ["url", "message"]) || // For error objects with a 'url' property
+    getErrorMessage(error, ["message"]) || // For standard error objects
+    children;
 
   if (!body) {
     return null;
