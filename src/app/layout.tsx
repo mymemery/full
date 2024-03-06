@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
+import { AI } from "@/app/actions";
 import Header from "@/components/header";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
@@ -27,11 +28,13 @@ export default function RootLayout({
         className={cn("min-h-screen font-sans antialiased", inter.className)}
       >
         <Providers>
-          <div className="flex h-screen flex-col">
-            <Header />
-            <div className="grow p-4">{children}</div>
-          </div>
-          <Toaster />
+          <AI>
+            <div className="flex h-screen flex-col">
+              <Header />
+              <div className="grow p-4">{children}</div>
+            </div>
+            <Toaster />
+          </AI>
         </Providers>
       </body>
     </html>

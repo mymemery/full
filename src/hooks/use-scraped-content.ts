@@ -2,14 +2,16 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import type { z } from "zod";
 
-import type { FormSchema } from "@/services/api";
+import type { AddLinkFormSchema } from "@/services/api";
 import { crawlWebpages } from "@/services/api";
 
 interface UseScrapedContent {
   isPending: boolean;
   scrapedContent: { [url: string]: string } | null;
-  handleSubmit: (values: z.infer<typeof FormSchema>) => void;
-  handleCleanUpText: (content: string) => Promise<string>;
+  handleSubmit: (values: z.infer<typeof AddLinkFormSchema>) => void;
+  setScrapedContent: React.Dispatch<
+    React.SetStateAction<{ [url: string]: string } | null>
+  >;
 }
 
 const useScrapedContent = (): UseScrapedContent => {
@@ -24,17 +26,11 @@ const useScrapedContent = (): UseScrapedContent => {
     },
   });
 
-  const handleSubmit = (values: z.infer<typeof FormSchema>) => {
+  const handleSubmit = (values: z.infer<typeof AddLinkFormSchema>) => {
     mutate(values);
   };
 
-  const handleCleanUpText = async (content: string): Promise<string> => {
-    // Implement your AI summarization logic here
-    // For now, let's just return the first 100 characters
-    return `${content.slice(0, 100)}...`;
-  };
-
-  return { isPending, scrapedContent, handleSubmit, handleCleanUpText };
+  return { isPending, scrapedContent, handleSubmit, setScrapedContent };
 };
 
 export default useScrapedContent;

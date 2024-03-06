@@ -15,11 +15,12 @@ import useScrapedContent from "@/hooks/use-scraped-content";
 import { logger } from "@/lib/logger";
 
 const AddMemeries = () => {
-  const { isPending, scrapedContent, handleSubmit, handleCleanUpText } =
+  const { isPending, scrapedContent, handleSubmit, setScrapedContent } =
     useScrapedContent();
 
   const handleSaveContent = async (content: { [url: string]: string }) => {
     try {
+      logger.info(content);
       await fetch("/api/save-content", {
         method: "POST",
         headers: {
@@ -51,9 +52,9 @@ const AddMemeries = () => {
             <Loader />
           ) : scrapedContent ? (
             <ScrapedContent
-              initialContent={scrapedContent}
-              onCleanUpText={handleCleanUpText}
+              scrapedContent={scrapedContent}
               onSaveContent={handleSaveContent}
+              onContentChange={setScrapedContent}
             />
           ) : (
             <AddLinks onSubmit={handleSubmit} />

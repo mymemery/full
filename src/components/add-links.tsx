@@ -14,15 +14,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { FormSchema } from "@/services/api";
+import { AddLinkFormSchema } from "@/services/api";
 
 interface AddLinksProps {
-  onSubmit: (values: z.infer<typeof FormSchema>) => void;
+  onSubmit: (values: z.infer<typeof AddLinkFormSchema>) => void;
 }
 
 const AddLinks: React.FC<AddLinksProps> = ({ onSubmit }) => {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<z.infer<typeof AddLinkFormSchema>>({
+    resolver: zodResolver(AddLinkFormSchema),
     defaultValues: {
       urls: [{ url: "" }],
     },
@@ -33,7 +33,7 @@ const AddLinks: React.FC<AddLinksProps> = ({ onSubmit }) => {
     name: "urls",
   });
 
-  const handleSubmit = (values: z.infer<typeof FormSchema>) => {
+  const handleSubmit = (values: z.infer<typeof AddLinkFormSchema>) => {
     onSubmit(values);
   };
 
