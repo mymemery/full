@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import type { ScrapedUrlContent } from "@/components/scraped-content";
 import { logger } from "@/lib/logger";
 
 const BASE_URL = "/api";
@@ -28,6 +29,27 @@ export const crawlWebpages = async (
     return scrapedDocuments;
   } catch (error) {
     logger.error(`Failed to add memery: ${error}`);
+    throw error;
+  }
+};
+
+export const saveContent = async (content: ScrapedUrlContent) => {
+  try {
+    logger.info(content);
+    const response = await fetch(`${BASE_URL}/save-content`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(content),
+    });
+    if (!response.ok || response.status !== 200) {
+      throw new Error(`Failed to save content: ${response.statusText}`);
+    }
+    logger.info("Content saved successfully");
+    return true;
+  } catch (error) {
+    logger.error(error);
     throw error;
   }
 };

@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import AddLinks from "@/components/add-links";
 import ScrapedContent from "@/components/scraped-content";
 import { Button } from "@/components/ui/button";
@@ -12,33 +14,26 @@ import {
 } from "@/components/ui/dialog";
 import { Loader } from "@/components/ui/loader";
 import useScrapedContent from "@/hooks/use-scraped-content";
-import { logger } from "@/lib/logger";
 
 const AddMemeries = () => {
-  const { isPending, scrapedContent, handleSubmit, setScrapedContent } =
-    useScrapedContent();
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const {
+    isPending,
+    isSaveSuccess,
+    scrapedContent,
+    handleSubmit,
+    handleSaveContent,
+    setScrapedContent,
+  } = useScrapedContent();
 
-  const handleSaveContent = async (content: { [url: string]: string }) => {
-    try {
-      logger.info(content);
-      await fetch("/api/save-content", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(content),
-      });
-      logger.info("Content saved successfully");
-      // Handle success
-    } catch (error) {
-      // Handle error
-      logger.error(`Failed saving content: ${error}`);
-    }
+  const handleSaveSuccess = () => {
+    setIsDialogOpen(false);
+    setScrapedContent(null);
   };
 
   return (
     <div>
-      <Dialog>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild>
           <Button className="rounded-full bg-blue-400 hover:bg-blue-600">
             +
@@ -50,10 +45,15 @@ const AddMemeries = () => {
           </DialogHeader>
           {isPending ? (
             <Loader />
-          ) : scrapedContent ? (
+          ) : scrapedContent && Object.keys(scrapedContent).length > 0 ? (
             <ScrapedContent
               scrapedContent={scrapedContent}
-              onSaveContent={handleSaveContent}
+              onSaveContent={async () => {
+                await handleSaveContent();
+                if (isSaveSuccess) {
+                  handleSaveSuccess();
+                }
+              }}
               onContentChange={setScrapedContent}
             />
           ) : (

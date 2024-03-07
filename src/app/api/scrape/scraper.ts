@@ -1,12 +1,15 @@
 import puppeteer from "puppeteer";
 
+import type { ScrapedUrlContent } from "@/components/scraped-content";
 import { logger } from "@/lib/logger";
 
-export type UrlItem = {
+export type UrlRequestItem = {
   url: string;
 };
 
-export async function scrape(urls: UrlItem[]): Promise<Record<string, string>> {
+export async function scrape(
+  urls: UrlRequestItem[],
+): Promise<ScrapedUrlContent> {
   logger.info(`Scraping URLs: ${urls}`);
   const result = {};
   const customUA =
@@ -19,8 +22,8 @@ export async function scrape(urls: UrlItem[]): Promise<Record<string, string>> {
   logger.info("Browser launched");
   const documents = await Promise.all(
     urls.map(async (urlItem) => {
+      const { url } = urlItem;
       try {
-        const { url } = urlItem;
         const page = await browser.newPage();
         await page.setUserAgent(customUA);
         await page.goto(url, { waitUntil: "networkidle2" });
@@ -33,8 +36,8 @@ export async function scrape(urls: UrlItem[]): Promise<Record<string, string>> {
         await page.close();
         return { [url]: data };
       } catch (error) {
-        logger.error(`Error scraping ${urlItem.url}: ${error}`);
-        return { [urlItem.url]: null };
+        logger.error(`Error scraping ${url}: ${error}`);
+        return { [url]: null };
       }
     }),
   );

@@ -1,22 +1,17 @@
-import { useUIState } from "ai/rsc";
 import type { Dispatch, SetStateAction } from "react";
 import React from "react";
 
-import type { AI } from "@/app/actions";
 import { CleanUpForm } from "@/components/clean-up-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader } from "@/components/ui/loader";
-import { useToast } from "@/components/ui/use-toast";
+
+export type ScrapedUrlContent = { [url: string]: string | null };
 
 interface ScrapedContentProps {
-  scrapedContent: { [url: string]: string };
-  onSaveContent: (content: { [url: string]: string }) => Promise<void>;
-  onContentChange: Dispatch<
-    SetStateAction<{
-      [url: string]: string;
-    }>
-  >;
+  scrapedContent: ScrapedUrlContent;
+  onSaveContent: () => Promise<void>;
+  onContentChange: Dispatch<SetStateAction<ScrapedUrlContent>>;
 }
 
 const ScrapedContent: React.FC<ScrapedContentProps> = ({
@@ -24,9 +19,6 @@ const ScrapedContent: React.FC<ScrapedContentProps> = ({
   onSaveContent,
   onContentChange,
 }) => {
-  const [messages] = useUIState<typeof AI>();
-  const { toast } = useToast();
-
   const handleContentChange = (url: string, newContent: string) => {
     onContentChange((prevContent) => ({
       ...prevContent,
@@ -35,10 +27,7 @@ const ScrapedContent: React.FC<ScrapedContentProps> = ({
   };
 
   const handleSaveContent = async () => {
-    await onSaveContent(scrapedContent);
-    toast({
-      description: `${Object.keys(scrapedContent).length} links saved successfully`,
-    });
+    await onSaveContent();
   };
 
   if (!scrapedContent) {
@@ -47,10 +36,8 @@ const ScrapedContent: React.FC<ScrapedContentProps> = ({
 
   return (
     <div className="h-full overflow-auto">
-      {messages.map((message) => (
-        <div key={message.id}>{message.display}</div>
-      ))}
       {scrapedContent &&
+        Object.keys(scrapedContent).length > 0 &&
         Object.entries(scrapedContent).map(([url, contentString]) => (
           <Card key={url} className="mb-4">
             <CardHeader>
