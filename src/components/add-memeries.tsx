@@ -14,22 +14,17 @@ import {
 } from "@/components/ui/dialog";
 import { Loader } from "@/components/ui/loader";
 import useScrapedContent from "@/hooks/use-scraped-content";
+import { logger } from "@/lib/logger";
 
 const AddMemeries = () => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const {
     isPending,
-    isSaveSuccess,
     scrapedContent,
     handleSubmit,
-    handleSaveContent,
+    saveMutate,
     setScrapedContent,
   } = useScrapedContent();
-
-  const handleSaveSuccess = () => {
-    setIsDialogOpen(false);
-    setScrapedContent(null);
-  };
 
   return (
     <div>
@@ -39,7 +34,7 @@ const AddMemeries = () => {
             +
           </Button>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent className="h-fit max-h-full">
           <DialogHeader>
             <DialogTitle>Add Memeries</DialogTitle>
           </DialogHeader>
@@ -49,10 +44,14 @@ const AddMemeries = () => {
             <ScrapedContent
               scrapedContent={scrapedContent}
               onSaveContent={async () => {
-                await handleSaveContent();
-                if (isSaveSuccess) {
-                  handleSaveSuccess();
-                }
+                saveMutate(scrapedContent, {
+                  onSuccess: () => {
+                    setIsDialogOpen(false);
+                  },
+                  onError: (error) => {
+                    logger.error(`error in save content: ${error}`);
+                  },
+                });
               }}
               onContentChange={setScrapedContent}
             />

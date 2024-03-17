@@ -19,12 +19,19 @@ const config = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
-  // callbacks: {
-  //   async session(session, user) {
-  //     session.user = user;
-  //     return session;
-  //   },
-  // },
+  callbacks: {
+    session({ session, user }) {
+      // session.user.address is now a valid property, and will be type-checked
+      // in places like `useSession().data.user` or `auth().user`
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          address: user.email,
+        },
+      };
+    },
+  },
 } satisfies NextAuthConfig;
 
 export const { handlers, auth, signIn, signOut } = NextAuth(config);

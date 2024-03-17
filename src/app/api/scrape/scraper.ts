@@ -37,7 +37,7 @@ export async function scrape(
         return { [url]: data };
       } catch (error) {
         logger.error(`Error scraping ${url}: ${error}`);
-        return { [url]: null };
+        return { [url]: "Page not found" };
       }
     }),
   );

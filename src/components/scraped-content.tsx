@@ -1,3 +1,4 @@
+import { X } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 import React from "react";
 
@@ -30,6 +31,14 @@ const ScrapedContent: React.FC<ScrapedContentProps> = ({
     await onSaveContent();
   };
 
+  const handleDeleteContent = (url: string) => {
+    onContentChange((prevContent) => {
+      const newContent = { ...prevContent };
+      delete newContent[url];
+      return newContent;
+    });
+  };
+
   if (!scrapedContent) {
     return <Loader />;
   }
@@ -39,7 +48,14 @@ const ScrapedContent: React.FC<ScrapedContentProps> = ({
       {scrapedContent &&
         Object.keys(scrapedContent).length > 0 &&
         Object.entries(scrapedContent).map(([url, contentString]) => (
-          <Card key={url} className="mb-4">
+          <Card key={url} className="relative mb-4">
+            <button
+              className="absolute right-2 top-2 text-red-500 hover:text-red-700 focus:outline-none"
+              type="button"
+              onClick={() => handleDeleteContent(url)}
+            >
+              <X className="size-4" />
+            </button>
             <CardHeader>
               <CardTitle className="truncate text-lg">{url}</CardTitle>
             </CardHeader>
